@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>يونس للإعلان - YouAdv</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
+body{background:#f8f7f4;min-height:100vh}
+.header{background:linear-gradient(135deg,#7F77DD,#534AB7);color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:sticky;top:0;z-index:100}
+.logo-name{font-size:20px;font-weight:800}
+.logo-sub{font-size:11px;opacity:.7}
+.header-btns{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{border:none;border-radius:10px;padding:8px 16px;cursor:pointer;font-weight:700;font-size:14px;font-family:inherit}
+.btn-ghost{background:rgba(255,255,255,.2);color:#fff}
+.btn-wa{background:#25D366;color:#fff;text-decoration:none;display:inline-flex;align-items:center;padding:8px 14px;border-radius:10px;font-weight:700;font-size:13px}
+.btn-cart{background:rgba(255,255,255,.2);color:#fff;border:none;border-radius:10px;padding:8px 14px;cursor:pointer;font-weight:700;font-size:14px;position:relative}
+.cart-badge{background:#D4537E;color:#fff;border-radius:50%;padding:1px 6px;font-size:11px;position:absolute;top:-4px;left:-4px}
+.hero{background:linear-gradient(135deg,#534AB7,#7F77DD,#D4537E);color:#fff;padding:44px 24px;text-align:center}
+.hero h1{font-size:26px;font-weight:800;margin-bottom:8px}
+.hero p{font-size:14px;opacity:.9;margin-bottom:6px}
+.hero .phone{font-size:15px;font-weight:700;margin-bottom:16px}
+.section{max-width:960px;margin:0 auto;padding:28px 16px}
+.section-title{font-size:22px;font-weight:800;color:#26215C;margin-bottom:16px;text-align:center}
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px}
+.filter-btn{background:#fff;color:#5F5E5A;border:1px solid #ccc;border-radius:20px;padding:7px 18px;cursor:pointer;font-size:14px;font-weight:400;font-family:inherit}
+.filter-btn.active{background:#7F77DD;color:#fff;border-color:#7F77DD;font-weight:700}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+.product-card{background:#fff;border:1px solid #e0ddd5;border-radius:14px;padding:16px;text-align:center;display:flex;flex-direction:column;gap:6px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.product-icon{font-size:34px}
+.product-name{font-weight:700;font-size:13px;color:#26215C;line-height:1.4}
+.product-desc{font-size:11px;color:#888;flex-grow:1}
+.product-price{font-size:15px;font-weight:800;margin-bottom:4px}
+.btn-add{background:#7F77DD;color:#fff;border:none;border-radius:8px;padding:8px 0;font-size:13px;font-weight:700;cursor:pointer;width:100%;font-family:inherit}
+.btn-add:hover{background:#534AB7}
+.btn-wa-small{background:#25D366;color:#fff;border:none;border-radius:8px;padding:8px 0;font-size:13px;font-weight:700;cursor:pointer;width:100%;font-family:inherit;text-decoration:none;display:block}
+.qty-control{display:flex;align-items:center;justify-content:center;gap:8px}
+.qty-btn{border:none;border-radius:6px;width:28px;height:28px;cursor:pointer;font-weight:700;font-size:16px;font-family:inherit}
+.qty-btn.minus{background:#eeedfe;color:#534AB7}
+.qty-btn.plus{background:#7F77DD;color:#fff}
+.qty-num{font-weight:700;color:#534AB7;min-width:20px;text-align:center}
+.footer{background:#26215C;color:#fff;padding:24px 20px;text-align:center;margin-top:20px}
+.footer h3{font-size:18px;font-weight:700;margin-bottom:6px}
+.footer p{font-size:13px;opacity:.7;margin-bottom:4px}
+.footer .admin-link{background:rgba(255,255,255,.08);border:none;color:rgba(255,255,255,.3);border-radius:8px;padding:5px 14px;cursor:pointer;font-size:11px;margin-top:14px;font-family:inherit}
+/* CART */
+.overlay{position:fixed;inset:0;z-index:200;display:flex;pointer-events:none;opacity:0;transition:opacity .3s}
+.overlay.open{pointer-events:all;opacity:1}
+.overlay-bg{flex:1;background:rgba(0,0,0,.4)}
+.cart-drawer{width:min(380px,100vw);background:#fff;display:flex;flex-direction:column;box-shadow:-4px 0 20px rgba(0,0,0,.15);transform:translateX(-100%);transition:transform .3s}
+html[dir=rtl] .cart-drawer{transform:translateX(100%)}
+.overlay.open .cart-drawer{transform:translateX(0)}
+.cart-header{background:#7F77DD;color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+.cart-header h3{font-weight:800;font-size:17px}
+.cart-close{background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;padding:4px 10px;cursor:pointer;font-size:18px}
+.cart-body{flex:1;overflow-y:auto;padding:16px}
+.cart-empty{text-align:center;color:#888;padding:40px;font-size:15px}
+.cart-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f0ede5}
+.cart-item-icon{font-size:28px}
+.cart-item-info{flex:1}
+.cart-item-name{font-weight:600;font-size:13px;color:#26215C}
+.cart-item-price{font-size:13px;color:#7F77DD;font-weight:700}
+.cart-item-remove{background:#fee;border:none;border-radius:6px;width:26px;height:26px;cursor:pointer;color:#D85A30;font-size:14px}
+.cart-footer{padding:16px;border-top:1px solid #e0ddd5}
+.cart-total-row{display:flex;justify-content:space-between;margin-bottom:12px;font-weight:700;font-size:15px}
+.cart-total-val{color:#7F77DD}
+.btn-checkout{background:#7F77DD;color:#fff;border:none;border-radius:10px;padding:12px;width:100%;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-checkout:hover{background:#534AB7}
+.btn-confirm{background:#1D9E75;color:#fff;border:none;border-radius:10px;padding:12px;width:100%;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit}
+/* CHECKOUT */
+.checkout-form{padding:0}
+.back-btn{background:none;border:none;color:#7F77DD;cursor:pointer;font-size:14px;font-weight:600;margin-bottom:16px;padding:0;font-family:inherit}
+.form-title{font-weight:700;color:#26215C;margin-bottom:16px;font-size:16px}
+.order-summary{background:#f8f7f4;border-radius:10px;padding:12px;margin-bottom:16px}
+.order-summary-item{font-size:13px;color:#444;margin-bottom:4px}
+.order-summary-total{font-weight:800;color:#7F77DD;margin-top:8px;font-size:15px}
+input,textarea,select{width:100%;padding:10px 14px;border-radius:10px;border:1px solid #ddd;font-size:15px;margin-bottom:12px;font-family:inherit;direction:inherit}
+textarea{min-height:80px;resize:vertical}
+/* SUCCESS */
+.success-banner{background:#e1f5ee;border:1px solid #97C459;margin:16px;border-radius:12px;padding:16px;text-align:center}
+.success-banner p{font-size:16px;color:#085041;font-weight:700;margin-bottom:10px}
+/* ADMIN LOGIN */
+.admin-login{position:fixed;inset:0;background:linear-gradient(135deg,#534AB7,#7F77DD);display:flex;align-items:center;justify-content:center;z-index:300;display:none}
+.admin-login.open{display:flex}
+.login-box{background:#fff;border-radius:18px;padding:40px;width:100%;max-width:340px;text-align:center}
+.login-icon{font-size:40px;margin-bottom:8px}
+.login-title{font-size:20px;font-weight:800;color:#26215C;margin-bottom:24px}
+.error-msg{color:#D85A30;font-size:13px;margin-bottom:10px}
+/* ADMIN PANEL */
+.admin-panel{display:none;min-height:100vh;background:#f8f7f4}
+.admin-panel.open{display:block}
+.admin-header{background:#26215C;color:#fff;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.admin-nav{background:#fff;border-bottom:1px solid #e0ddd5;display:flex;overflow-x:auto;padding:0 8px}
+.nav-btn{background:none;border:none;cursor:pointer;padding:12px 18px;font-size:14px;font-weight:400;color:#5F5E5A;border-bottom:3px solid transparent;white-space:nowrap;font-family:inherit}
+.nav-btn.active{color:#7F77DD;font-weight:700;border-bottom-color:#7F77DD}
+.admin-content{max-width:950px;margin:0 auto;padding:20px 16px}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:20px}
+.metric{border-radius:12px;padding:16px;text-align:center}
+.metric-val{font-size:28px;font-weight:800;display:block}
+.metric-lbl{font-size:12px;opacity:.8;margin-top:4px}
+.card{background:#fff;border-radius:12px;border:1px solid #e0ddd5;padding:16px;margin-bottom:16px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:400px}
+th{padding:10px 8px;border-bottom:2px solid #e0ddd5;color:#5F5E5A;font-weight:600;text-align:right;font-size:13px}
+td{padding:9px 8px;border-bottom:1px solid #f0ede5;vertical-align:middle;font-size:13px}
+.badge{display:inline-block;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:600}
+.web-badge{background:#D4537E;color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;margin-right:4px}
+.status-select{border:none;border-radius:20px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.page-title{font-size:20px;font-weight:800;color:#26215C;margin-bottom:20px}
+.row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.notification{background:#D4537E;color:#fff;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:700}
+</style>
+</head>
+<body>
+
+<!-- MAIN SITE -->
+<div id="site">
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="logo-name">يونس للإعلان</div>
+      <div class="logo-sub">YouAdv</div>
+    </div>
+    <div class="header-btns">
+      <button class="btn btn-ghost" onclick="toggleLang()" id="lang-btn">English</button>
+      <a href="https://wa.me/201019847290" target="_blank" class="btn-wa">💬 <span data-t="waBtn">تواصل واتساب</span></a>
+      <button class="btn-cart" onclick="openCart()">🛒 <span id="cart-badge" class="cart-badge" style="display:none">0</span></button>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1 data-t="hero">نطبع أحلامك ونصنع تميزك</h1>
+    <p data-t="heroSub">طباعة • جوائز • أدوات مكتبية • أختام</p>
+    <p>📍 <span data-t="branch1">المعرض: الجيزة، ش. سعد زغلول، ميدان الجيزة، عمارة 171</span></p>
+    <p>📍 <span data-t="branch2">الورشة: العتبة، ش. محمد علي، أمام قسم الموسكي، عمارة 157</span></p>
+    <p class="phone">📞 01019847290</p>
+  </div>
+
+  <!-- Success Banner -->
+  <div class="success-banner" id="success-banner" style="display:none">
+    <p data-t="orderSuccess">🎉 تم إرسال طلبك بنجاح! سنتواصل معك قريباً.</p>
+    <button class="btn btn-add" onclick="document.getElementById('success-banner').style.display='none'" data-t="newOrder">طلب جديد</button>
+  </div>
+
+  <!-- Catalog -->
+  <div class="section">
+    <div class="section-title" data-t="catalogTitle">منتجاتنا</div>
+    <div class="filter-bar" id="filter-bar"></div>
+    <div class="products-grid" id="products-grid"></div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <h3>يونس للإعلان</h3>
+    <p>📍 <span data-t="branch1">المعرض: الجيزة، ش. سعد زغلول، ميدان الجيزة، عمارة 171</span></p>
+    <p>📍 <span data-t="branch2">الورشة: العتبة، ش. محمد علي، أمام قسم الموسكي، عمارة 157</span></p>
+    <p>📞 01019847290</p>
+    <button class="admin-link" onclick="openAdminLogin()">إدارة النظام</button>
+  </div>
+</div>
+
+<!-- CART DRAWER -->
+<div class="overlay" id="cart-overlay">
+  <div class="overlay-bg" onclick="closeCart()"></div>
+  <div class="cart-drawer">
+    <div class="cart-header">
+      <h3>🛒 <span data-t="cartTitle">سلة الطلبات</span></h3>
+      <button class="cart-close" onclick="closeCart()">✕</button>
+    </div>
+    <div class="cart-body" id="cart-body"></div>
+    <div class="cart-footer" id="cart-footer" style="display:none">
+      <div class="cart-total-row">
+        <span data-t="cartTotal">الإجمالي</span>
+        <span class="cart-total-val" id="cart-total-val">0 ج.م</span>
+      </div>
+      <button class="btn-checkout" id="checkout-btn" onclick="showCheckout()" data-t="checkout">إرسال الطلب ←</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div class="admin-login" id="admin-login">
+  <div class="login-box">
+    <div class="login-icon">🔐</div>
+    <div class="login-title">يونس للإعلان</div>
+    <input type="password" id="pass-input" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <div class="error-msg" id="pass-error" style="display:none">كلمة المرور خاطئة</div>
+    <button class="btn-checkout" onclick="doLogin()" style="margin-bottom:10px">دخول</button>
+    <button class="btn-checkout" onclick="closeAdminLogin()" style="background:#eee;color:#333;margin-top:8px">← العودة للموقع</button>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-panel" id="admin-panel">
+  <div class="admin-header">
+    <div><span style="font-size:18px;font-weight:800">يونس للإعلان</span><span style="font-size:11px;opacity:.6;margin-right:8px">Admin</span></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <span class="notification" id="admin-notif" style="display:none"></span>
+      <button class="btn btn-ghost" onclick="toggleLang()">English</button>
+      <button class="btn" style="background:#D85A30;color:#fff" onclick="closeAdmin()">← العودة للموقع</button>
+    </div>
+  </div>
+  <div class="admin-nav">
+    <button class="nav-btn active" onclick="showAdminPage('dashboard',this)">🏠 الرئيسية</button>
+    <button class="nav-btn" onclick="showAdminPage('orders',this)">📦 الطلبات</button>
+    <button class="nav-btn" onclick="showAdminPage('catalog',this)">🗂️ المنتجات</button>
+    <button class="nav-btn" onclick="showAdminPage('invoices',this)">🧾 الفواتير</button>
+  </div>
+  <div class="admin-content" id="admin-content"></div>
+</div>
+
+<script>
+const PHONE = "01019847290";
+const ADMIN_PASS = "youadv2025";
+let lang = "ar";
+let cart = [];
+let orders = [
+  {id:1,customerName:"أحمد محمود",phone:"01012345678",items:[{productId:44,name:"درع كريستال صغير",icon:"💎",price:150,qty:1}],design:"اسم الشركة بالذهبي",status:"delivered",date:"2025-05-01",total:150,source:"admin"},
+  {id:2,customerName:"سارة علي",phone:"01298765432",items:[{productId:28,name:"كروت أوفست",icon:"🃏",price:500,qty:2}],design:"لوجو الشركة",status:"inprogress",date:"2025-05-08",total:1000,source:"admin"},
+];
+let currentAdminPage = "dashboard";
+
+const TX = {
+  ar:{hero:"نطبع أحلامك ونصنع تميزك",heroSub:"طباعة • جوائز • أدوات مكتبية • أختام",branch1:"المعرض: الجيزة، ش. سعد زغلول، ميدان الجيزة، عمارة 171",branch2:"الورشة: العتبة، ش. محمد علي، أمام قسم الموسكي، عمارة 157",waBtn:"تواصل واتساب",catalogTitle:"منتجاتنا",cartTitle:"سلة الطلبات",cartTotal:"الإجمالي",checkout:"إرسال الطلب ←",orderSuccess:"🎉 تم إرسال طلبك بنجاح! سنتواصل معك قريباً.",newOrder:"طلب جديد",callUs:"📞 اتصل بنا",addToCart:"أضف للسلة 🛒",egp:"ج.م",cats:{all:"الكل",printing:"طباعة",trophy:"جوائز",desk:"مكتبية",stamp:"أختام"},statusMap:{pending:"قيد الانتظار",inprogress:"جاري التنفيذ",ready:"جاهز",delivered:"تم التسليم"}},
+  en:{hero:"Print Your Dreams, Stand Out",heroSub:"Printing • Trophies • Desk Items • Stamps",branch1:"Showroom: Giza, Saad Zaghloul St., Giza Sq., Bldg. 171",branch2:"Workshop: El Ataba, Mohamed Ali St., opp. Mosky Police, Bldg. 157",waBtn:"WhatsApp Us",catalogTitle:"Our Products",cartTitle:"Order Cart",cartTotal:"Total",checkout:"Send Order →",orderSuccess:"🎉 Order sent! We'll contact you soon.",newOrder:"New Order",callUs:"📞 Contact Us",addToCart:"Add to Cart 🛒",egp:"EGP",cats:{all:"All",printing:"Printing",trophy:"Trophies",desk:"Desk",stamp:"Stamps"},statusMap:{pending:"Pending",inprogress:"In Progress",ready:"Ready",delivered:"Delivered"}},
+};
+
+const COLORS = {printing:"#7F77DD",trophy:"#D85A30",desk:"#1D9E75",stamp:"#D4537E"};
+const SC = {pending:"#FAC775",inprogress:"#85B7EB",ready:"#97C459",delivered:"#5DCAA5"};
+const ST = {pending:"#633806",inprogress:"#042C53",ready:"#173404",delivered:"#04342C"};
+
+const PRODUCTS = {
+  ar:[
+    {id:1,cat:"printing",name:"طباعة بروشور",price:0,icon:"🖨️",desc:"السعر حسب المقاس • الكمية • نوع الطباعة — تواصل معنا للعرض!"},
+    {id:2,cat:"printing",name:"طباعة بنر (يبدأ من 75 ج/متر)",price:75,icon:"🖼️",desc:"جميع المقاسات متاحة"},
+    {id:4,cat:"printing",name:"طباعة ستيكر تقطيع ليزر (1000 قطعة)",price:350,icon:"🏷️",desc:"تقطيع ليزر | يوجد كميات حسب الطلب"},
+    {id:28,cat:"printing",name:"كروت أوفست (1000 كارت)",price:500,icon:"🃏",desc:"طباعة أوفست عالية الجودة"},
+    {id:29,cat:"printing",name:"كروت ديجيتال (300 كارت)",price:350,icon:"💳",desc:"طباعة ديجيتال سريعة"},
+    {id:30,cat:"printing",name:"كروت ديجيتال (500 كارت)",price:450,icon:"💳",desc:"طباعة ديجيتال سريعة"},
+    {id:31,cat:"printing",name:"كروت ديجيتال (1000 كارت)",price:700,icon:"💳",desc:"طباعة ديجيتال سريعة"},
+    {id:32,cat:"printing",name:"1000 إعلان نص A4",price:450,icon:"📄",desc:"إعلانات نص A4"},
+    {id:33,cat:"printing",name:"2000 إعلان ربع A4",price:550,icon:"📄",desc:"إعلانات ربع A4"},
+    {id:34,cat:"printing",name:"10 دفاتر وشيتات نص A4",price:500,icon:"📋",desc:"شيتات نص A4"},
+    {id:35,cat:"printing",name:"10 دفاتر فواتير نص A4 (أصل)",price:500,icon:"🧾",desc:"أصل فقط"},
+    {id:36,cat:"printing",name:"10 دفاتر فواتير نص A4 (أصل وصورة)",price:600,icon:"🧾",desc:"أصل وصورة"},
+    {id:37,cat:"printing",name:"10 دفاتر فواتير نص A4 (أصل و2 صورة)",price:700,icon:"🧾",desc:"أصل و2 صورة"},
+    {id:38,cat:"printing",name:"20 دفتر فاتورة ربع A4 (أصل)",price:650,icon:"🧾",desc:"ربع A4 أصل فقط"},
+    {id:39,cat:"printing",name:"20 دفتر فاتورة ربع A4 (أصل و2 صورة)",price:900,icon:"🧾",desc:"ربع A4 أصل و2 صورة"},
+    {id:40,cat:"printing",name:"20 دفتر فاتورة نص A4 (أصل وصورة)",price:900,icon:"🧾",desc:"نص A4 أصل وصورة"},
+    {id:41,cat:"printing",name:"5 دفاتر فواتير A4 (أصل)",price:450,icon:"🧾",desc:"A4 أصل فقط"},
+    {id:42,cat:"printing",name:"10 دفاتر فواتير A4 (أصل وصورة)",price:900,icon:"🧾",desc:"A4 أصل وصورة"},
+    {id:5,cat:"trophy",name:"كوب جائزة",price:0,icon:"🏆",desc:"نقش بالاسم والشعار • يبدأ من 120 ج.م"},
+    {id:6,cat:"trophy",name:"درع تكريمي كريستال مستورد",price:0,icon:"🥇",desc:"كريستال مستورد فاخر • يبدأ من 150 ج.م"},
+    {id:7,cat:"trophy",name:"ميدالية",price:0,icon:"🎖️",desc:"مقاسات ورياضات متنوعة • تبدأ من 35 ج.م"},
+    {id:43,cat:"trophy",name:"درع قطيفة (15×20)",price:80,icon:"🏅",desc:"قطيفة أنيقة"},
+    {id:44,cat:"trophy",name:"درع كريستال صغير (بالعلبة والطباعة)",price:150,icon:"💎",desc:"كريستال شفاف مع علبة"},
+    {id:45,cat:"trophy",name:"درع كريستال وسط (بالعلبة والطباعة)",price:300,icon:"💎",desc:"كريستال متوسط مع علبة"},
+    {id:46,cat:"trophy",name:"درع كريستال كبير (بالعلبة والطباعة)",price:375,icon:"💎",desc:"كريستال كبير مع علبة"},
+    {id:53,cat:"trophy",name:"درع خشب مصري كبير",price:100,icon:"🪵",desc:"خشب مصري أصيل"},
+    {id:54,cat:"trophy",name:"درع خشب مصري وسط",price:75,icon:"🪵",desc:"خشب مصري أصيل"},
+    {id:55,cat:"trophy",name:"درع خشب مصري صغير",price:50,icon:"🪵",desc:"خشب مصري أصيل"},
+    {id:8,cat:"desk",name:"حامل أقلام",price:90,icon:"✏️",desc:"مطبوع بشعار شركتك"},
+    {id:9,cat:"desk",name:"ممسحة مكتبية",price:50,icon:"🧽",desc:"للشاشات والأجهزة"},
+    {id:10,cat:"desk",name:"مفكرة مطبوعة",price:130,icon:"📔",desc:"تصميم خاص بك"},
+    {id:47,cat:"desk",name:"استاند بلاستيك (وش وضهر) 15×20",price:200,icon:"🪧",desc:"بلاستيك وجهين"},
+    {id:48,cat:"desk",name:"استاند بلاستيك (وش وضهر) 20×30",price:350,icon:"🪧",desc:"بلاستيك وجهين كبير"},
+    {id:49,cat:"desk",name:"استاند أكليريك وجه واحد 15×20",price:200,icon:"🖼️",desc:"أكليريك شفاف وجه واحد"},
+    {id:50,cat:"desk",name:"استاند أكليريك وجه واحد 20×30",price:325,icon:"🖼️",desc:"أكليريك شفاف وجه واحد كبير"},
+    {id:51,cat:"desk",name:"استاند بلاستيك قاعدة خشب مذهب 15×20",price:350,icon:"✨",desc:"قاعدة خشب مذهبة"},
+    {id:52,cat:"desk",name:"استاند بلاستيك قاعدة خشب مذهب 20×30",price:500,icon:"✨",desc:"قاعدة خشب مذهبة كبيرة"},
+    {id:56,cat:"desk",name:"طقم مكتب جلد (9-11 قطعة)",price:700,icon:"🗂️",desc:"جلد فاخر • طباعة حسب الطلب"},
+    {id:57,cat:"desk",name:"طقم مكتب جلد (15 قطعة)",price:900,icon:"🗂️",desc:"جلد فاخر • طباعة حسب الطلب"},
+    {id:58,cat:"desk",name:"استاند مكتب كريستال",price:350,icon:"💎",desc:"كريستال شفاف أنيق"},
+    {id:59,cat:"desk",name:"استاند مكتب خشب صغير",price:300,icon:"🪵",desc:"خشب طبيعي صغير"},
+    {id:60,cat:"desk",name:"استاند مكتب خشب كبير",price:0,icon:"🪵",desc:"يبدأ من 650 ج.م — تواصل معنا!"},
+    {id:61,cat:"desk",name:"استاند مكتب كريستال مستورد",price:0,icon:"💎",desc:"يبدأ من 500 ج.م — تواصل معنا!"},
+    {id:62,cat:"desk",name:"استاند مكتب خشب مستورد",price:0,icon:"🪵",desc:"يبدأ من 650 ج.م — تواصل معنا!"},
+    {id:11,cat:"stamp",name:"ختم مطاطي",price:180,icon:"📬",desc:"سريع ودقيق"},
+    {id:12,cat:"stamp",name:"ختم فلاشي",price:280,icon:"🔏",desc:"حبر داخلي لا ينتهي"},
+    {id:13,cat:"stamp",name:"ختم ماكينة كبير (5.5×2.5)",price:200,icon:"🖊️",desc:"مقاس كبير احترافي"},
+    {id:14,cat:"stamp",name:"ختم بوكيت تروديت (1.5×4)",price:250,icon:"🔖",desc:"جيبي صغير الحجم"},
+    {id:15,cat:"stamp",name:"ختم بوكيت تروديت (2×5)",price:300,icon:"🔖",desc:"جيبي متوسط الحجم"},
+    {id:16,cat:"stamp",name:"ختم مدور (لوجو)",price:275,icon:"⭕",desc:"مدور بتصميم اللوجو"},
+    {id:17,cat:"stamp",name:"ختم مدور (مارك)",price:300,icon:"🔴",desc:"مدور بتصميم الماركة"},
+    {id:18,cat:"stamp",name:"ختم تراكس كبير",price:215,icon:"✳️",desc:"تراكس مقاس كبير"},
+    {id:19,cat:"stamp",name:"ختم تراكس وسط (2×5)",price:205,icon:"✳️",desc:"تراكس مقاس متوسط"},
+    {id:20,cat:"stamp",name:"ختم تراكس صغير (1.5×4)",price:190,icon:"✳️",desc:"تراكس مقاس صغير"},
+    {id:21,cat:"stamp",name:"ختم مربع تراكس (4×4)",price:300,icon:"🔲",desc:"مربع تراكس"},
+    {id:22,cat:"stamp",name:"ختم خشب كبير (5.5×2.5)",price:120,icon:"🪵",desc:"خشب طبيعي مقاس كبير"},
+    {id:23,cat:"stamp",name:"ختم خشب مدور (4.5)",price:150,icon:"🪵",desc:"خشب مدور كبير"},
+    {id:24,cat:"stamp",name:"ختم خشب مدور",price:125,icon:"🪵",desc:"خشب مدور قياسي"},
+    {id:25,cat:"stamp",name:"ختم خشب (2×5)",price:100,icon:"🪵",desc:"خشب مستطيل"},
+    {id:26,cat:"stamp",name:"ختم خشب بيضاوي (2.5×4.5)",price:150,icon:"🪵",desc:"خشب بيضاوي الشكل"},
+    {id:27,cat:"stamp",name:"ختم خشب مربع (4×4)",price:300,icon:"🪵",desc:"خشب مربع الشكل"},
+  ]
+};
+PRODUCTS.en = PRODUCTS.ar; // same products, switch names handled per lang
+
+let activeCat = "all";
+
+function t(key){return TX[lang][key]||key}
+function ts(key){return TX[lang].statusMap[key]||key}
+
+function toggleLang(){
+  lang = lang==="ar"?"en":"ar";
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang==="ar"?"rtl":"ltr";
+  document.querySelectorAll("[data-t]").forEach(el=>{
+    const k=el.getAttribute("data-t");
+    if(TX[lang][k]) el.textContent=TX[lang][k];
+  });
+  document.getElementById("lang-btn").textContent = lang==="ar"?"English":"العربية";
+  renderProducts();
+  renderCart();
+  if(currentAdminPage) renderAdminPage(currentAdminPage);
+}
+
+function renderFilters(){
+  const bar = document.getElementById("filter-bar");
+  const cats = t("cats");
+  bar.innerHTML = Object.keys(cats).map(k=>
+    `<button class="filter-btn ${activeCat===k?'active':''}" onclick="filterCat('${k}')">${cats[k]}</button>`
+  ).join("");
+}
+
+function filterCat(cat){
+  activeCat=cat;
+  renderFilters();
+  renderProducts();
+}
+
+function renderProducts(){
+  const prods = PRODUCTS.ar.filter(p=> activeCat==="all"||p.cat===activeCat);
+  const grid = document.getElementById("products-grid");
+  grid.innerHTML = prods.map(p=>{
+    const inCart = cart.find(i=>i.productId===p.id);
+    const color = COLORS[p.cat];
+    const priceHtml = p.price===0
+      ? `<span style="color:${color}">${t("callUs")}</span>`
+      : `<span style="color:${color}">${p.price} ${t("egp")}</span>`;
+    const btnHtml = p.price===0
+      ? `<a href="https://wa.me/20${PHONE}" target="_blank" class="btn-wa-small">💬 ${t("waBtn")}</a>`
+      : inCart
+        ? `<div class="qty-control">
+            <button class="qty-btn minus" onclick="updateQty(${p.id},-1)">−</button>
+            <span class="qty-num">${inCart.qty}</span>
+            <button class="qty-btn plus" onclick="updateQty(${p.id},1)">+</button>
+           </div>`
+        : `<button class="btn-add" onclick="addToCart(${p.id})">${t("addToCart")}</button>`;
+    return `<div class="product-card" style="border-top:4px solid ${color}">
+      <div class="product-icon">${p.icon}</div>
+      <div class="product-name">${p.name}</div>
+      <div class="product-desc">${p.desc}</div>
+      <div class="product-price">${priceHtml}</div>
+      ${btnHtml}
+    </div>`;
+  }).join("");
+}
+
+function addToCart(id){
+  const p = PRODUCTS.ar.find(p=>p.id===id);
+  if(!p||p.price===0) return;
+  const ex = cart.find(i=>i.productId===id);
+  if(ex) ex.qty++;
+  else cart.push({productId:p.id,name:p.name,icon:p.icon,price:p.price,qty:1});
+  updateCartBadge();
+  renderProducts();
+  renderCart();
+  openCart();
+}
+
+function updateQty(id, delta){
+  const item = cart.find(i=>i.productId===id);
+  if(!item) return;
+  item.qty = Math.max(1, item.qty+delta);
+  updateCartBadge();
+  renderProducts();
+  renderCart();
+}
+
+function removeFromCart(id){
+  cart = cart.filter(i=>i.productId!==id);
+  updateCartBadge();
+  renderProducts();
+  renderCart();
+}
+
+function updateCartBadge(){
+  const total = cart.reduce((s,i)=>s+i.qty,0);
+  const badge = document.getElementById("cart-badge");
+  badge.textContent = total;
+  badge.style.display = total>0?"":"none";
+}
+
+function cartTotal(){return cart.reduce((s,i)=>s+i.price*i.qty,0)}
+
+function renderCart(){
+  const body = document.getElementById("cart-body");
+  const footer = document.getElementById("cart-footer");
+  if(cart.length===0){
+    body.innerHTML=`<div class="cart-empty">🛒<br>${t("cartEmpty")}</div>`;
+    footer.style.display="none";
+  } else {
+    body.innerHTML=cart.map(item=>`
+      <div class="cart-item">
+        <span class="cart-item-icon">${item.icon}</span>
+        <div class="cart-item-info">
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-price">${item.price} ${t("egp")}</div>
+        </div>
+        <div class="qty-control">
+          <button class="qty-btn minus" onclick="updateQty(${item.productId},-1)">−</button>
+          <span class="qty-num">${item.qty}</span>
+          <button class="qty-btn plus" onclick="updateQty(${item.productId},1)">+</button>
+        </div>
+        <button class="cart-item-remove" onclick="removeFromCart(${item.productId})">✕</button>
+      </div>`).join("");
+    document.getElementById("cart-total-val").textContent = cartTotal()+" "+t("egp");
+    footer.style.display="block";
+    document.getElementById("checkout-btn").textContent = t("checkout");
+  }
+}
+
+function showCheckout(){
+  const body = document.getElementById("cart-body");
+  body.innerHTML=`
+    <div class="checkout-form">
+      <button class="back-btn" onclick="renderCart()">← ${lang==="ar"?"رجوع للسلة":"Back to Cart"}</button>
+      <div class="form-title">${lang==="ar"?"بيانات الطلب":"Order Details"}</div>
+      <div class="order-summary">
+        ${cart.map(i=>`<div class="order-summary-item">${i.icon} ${i.name} × ${i.qty} = <strong>${i.price*i.qty} ${t("egp")}</strong></div>`).join("")}
+        <div class="order-summary-total">${t("cartTotal")}: ${cartTotal()} ${t("egp")}</div>
+      </div>
+      <input id="o-name" placeholder="${lang==="ar"?"الاسم الكامل *":"Full Name *"}" />
+      <input id="o-phone" placeholder="${lang==="ar"?"رقم الهاتف *":"Phone *"}" />
+      <textarea id="o-notes" placeholder="${lang==="ar"?"ملاحظات التصميم...":"Design notes..."}"></textarea>
+      <button class="btn-confirm" onclick="submitOrder()">${lang==="ar"?"✅ تأكيد وإرسال الطلب":"✅ Confirm & Send"}</button>
+    </div>`;
+  document.getElementById("cart-footer").style.display="none";
+}
+
+function submitOrder(){
+  const name = document.getElementById("o-name").value.trim();
+  const phone = document.getElementById("o-phone").value.trim();
+  const notes = document.getElementById("o-notes").value.trim();
+  if(!name||!phone){alert(lang==="ar"?"يرجى إدخال الاسم والهاتف":"Please enter name and phone");return;}
+  orders.push({
+    id:orders.length+1,
+    customerName:name, phone,
+    items:[...cart],
+    design:notes,
+    status:"pending",
+    date:new Date().toISOString().slice(0,10),
+    total:cartTotal(),
+    source:"site"
+  });
+  cart=[];
+  updateCartBadge();
+  renderProducts();
+  closeCart();
+  document.getElementById("success-banner").style.display="block";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function openCart(){document.getElementById("cart-overlay").classList.add("open");renderCart();}
+function closeCart(){document.getElementById("cart-overlay").classList.remove("open");}
+function openAdminLogin(){document.getElementById("admin-login").classList.add("open");}
+function closeAdminLogin(){document.getElementById("admin-login").classList.remove("open");}
+
+function doLogin(){
+  if(document.getElementById("pass-input").value===ADMIN_PASS){
+    closeAdminLogin();
+    document.getElementById("site").style.display="none";
+    document.getElementById("admin-panel").classList.add("open");
+    renderAdminPage("dashboard");
+  } else {
+    document.getElementById("pass-error").style.display="block";
+  }
+}
+
+function closeAdmin(){
+  document.getElementById("admin-panel").classList.remove("open");
+  document.getElementById("site").style.display="block";
+  document.getElementById("pass-input").value="";
+}
+
+function showAdminPage(page, btn){
+  currentAdminPage=page;
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+  if(btn) btn.classList.add("active");
+  renderAdminPage(page);
+}
+
+function renderAdminPage(page){
+  const c = document.getElementById("admin-content");
+  const newFromSite = orders.filter(o=>o.source==="site"&&o.status==="pending").length;
+  const notif = document.getElementById("admin-notif");
+  if(newFromSite>0){notif.style.display="";notif.textContent=`🔔 ${newFromSite} ${lang==="ar"?"طلب جديد من الموقع":"new web orders"}`;}
+  else notif.style.display="none";
+
+  if(page==="dashboard"){
+    const revenue = orders.filter(o=>o.status==="delivered").reduce((s,o)=>s+o.total,0);
+    const pending = orders.filter(o=>o.status==="pending").length;
+    c.innerHTML=`
+      <div class="page-title">${lang==="ar"?"لوحة التحكم":"Dashboard"}</div>
+      <div class="metrics">
+        <div class="metric" style="background:#eeedfe"><span class="metric-val" style="color:#3C3489">${orders.length}</span><div class="metric-lbl" style="color:#3C3489">${lang==="ar"?"إجمالي الطلبات":"Total Orders"}</div></div>
+        <div class="metric" style="background:#faeeda"><span class="metric-val" style="color:#633806">${pending}</span><div class="metric-lbl" style="color:#633806">${lang==="ar"?"قيد الانتظار":"Pending"}</div></div>
+        <div class="metric" style="background:#faece7"><span class="metric-val" style="color:#4A1B0C">${revenue}</span><div class="metric-lbl" style="color:#4A1B0C">${lang==="ar"?"الإيرادات ج.م":"Revenue EGP"}</div></div>
+      </div>
+      <div class="card">
+        <div style="font-weight:700;color:#26215C;margin-bottom:12px">${lang==="ar"?"آخر الطلبات":"Recent Orders"}</div>
+        <table><thead><tr><th>${lang==="ar"?"العميل":"Customer"}</th><th>${lang==="ar"?"المنتجات":"Products"}</th><th>${lang==="ar"?"الحالة":"Status"}</th><th>${lang==="ar"?"الإجمالي":"Total"}</th></tr></thead>
+        <tbody>${[...orders].reverse().slice(0,5).map(o=>`<tr>
+          <td>${o.customerName}${o.source==="site"?'<span class="web-badge">web</span>':''}</td>
+          <td>${o.items.map(i=>i.name).join("، ")}</td>
+          <td><span class="badge" style="background:${SC[o.status]};color:${ST[o.status]}">${ts(o.status)}</span></td>
+          <td><strong>${o.total} ج.م</strong></td>
+        </tr>`).join("")}</tbody></table>
+      </div>`;
+  }
+
+  if(page==="orders"){
+    c.innerHTML=`
+      <div class="row">
+        <div class="page-title" style="margin:0">${lang==="ar"?"الطلبات":"Orders"}</div>
+      </div>
+      <div class="card">
+        <table><thead><tr>
+          <th>${lang==="ar"?"العميل":"Customer"}</th>
+          <th>${lang==="ar"?"الهاتف":"Phone"}</th>
+          <th>${lang==="ar"?"المنتجات":"Products"}</th>
+          <th>${lang==="ar"?"ملاحظات":"Notes"}</th>
+          <th>${lang==="ar"?"الحالة":"Status"}</th>
+          <th>${lang==="ar"?"الإجمالي":"Total"}</th>
+        </tr></thead>
+        <tbody>${[...orders].reverse().map(o=>`<tr>
+          <td>${o.customerName}${o.source==="site"?'<span class="web-badge">web</span>':''}</td>
+          <td>${o.phone||"-"}</td>
+          <td style="font-size:12px">${o.items.map(i=>`${i.icon} ${i.name}`).join("، ")}</td>
+          <td style="font-size:12px;color:#888;max-width:120px">${o.design||"-"}</td>
+          <td><select class="status-select" style="background:${SC[o.status]};color:${ST[o.status]}" onchange="changeStatus(${o.id},this.value)">
+            ${["pending","inprogress","ready","delivered"].map(s=>`<option value="${s}" ${o.status===s?"selected":""}>${ts(s)}</option>`).join("")}
+          </select></td>
+          <td><strong>${o.total} ج.م</strong></td>
+        </tr>`).join("")}</tbody></table>
+      </div>`;
+  }
+
+  if(page==="catalog"){
+    c.innerHTML=`
+      <div class="page-title">${lang==="ar"?"المنتجات":"Products"}</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px">
+        ${PRODUCTS.ar.map(p=>`
+          <div style="background:#fff;border:1px solid #e0ddd5;border-radius:12px;padding:14px;text-align:center;border-top:3px solid ${COLORS[p.cat]}">
+            <div style="font-size:28px;margin-bottom:6px">${p.icon}</div>
+            <div style="font-weight:700;font-size:12px;color:#26215C;margin-bottom:4px">${p.name}</div>
+            <div style="font-size:13px;color:${COLORS[p.cat]};font-weight:800">${p.price===0?"📞 اتصل بنا":p.price+" ج.م"}</div>
+          </div>`).join("")}
+      </div>`;
+  }
+
+  if(page==="invoices"){
+    c.innerHTML=`
+      <div class="page-title">${lang==="ar"?"الفواتير":"Invoices"}</div>
+      <div class="card">
+        <table><thead><tr>
+          <th>${lang==="ar"?"رقم":"#"}</th>
+          <th>${lang==="ar"?"العميل":"Customer"}</th>
+          <th>${lang==="ar"?"المبلغ":"Amount"}</th>
+          <th>${lang==="ar"?"الحالة":"Status"}</th>
+          <th>${lang==="ar"?"التاريخ":"Date"}</th>
+        </tr></thead>
+        <tbody>${orders.map(o=>`<tr>
+          <td>INV-${String(o.id).padStart(3,"0")}</td>
+          <td>${o.customerName}</td>
+          <td><strong>${o.total} ج.م</strong></td>
+          <td><span style="display:inline-block;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:600;background:${o.status==="delivered"?"#e1f5ee":"#faeeda"};color:${o.status==="delivered"?"#04342C":"#633806"}">${o.status==="delivered"?(lang==="ar"?"مدفوع":"Paid"):(lang==="ar"?"غير مدفوع":"Unpaid")}</span></td>
+          <td>${o.date}</td>
+        </tr>`).join("")}</tbody></table>
+      </div>`;
+  }
+}
+
+function changeStatus(id, status){
+  const o = orders.find(o=>o.id===id);
+  if(o) o.status=status;
+}
+
+// Init
+renderFilters();
+renderProducts();
+</script>
+</body>
+</html>
